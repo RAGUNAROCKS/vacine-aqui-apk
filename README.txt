@@ -8,3 +8,10 @@ Vacine Aqui 0.1
     - Unidade de Saúde da Familia Parque Pituaçu / Posto de Vacinação
     - UBS Manoel Vitorino
 - Adição da chave do API no aplicativo.
+
+Vacine Aqui 0.2
+
+- Adição da geolocalização do usuário no mapa.
+- O mapa ao iniciar, só exibirá o marcador do usuário.
+- A cor do marcador foi modificada para laranja.
+- Ao clicar no botão, será exibido os marcadores dos postos de vacina.
