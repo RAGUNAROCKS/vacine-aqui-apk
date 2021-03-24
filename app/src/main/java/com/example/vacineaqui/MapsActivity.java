@@ -20,17 +20,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
-    private LatLng p1 = new LatLng(-12.979091651458296, -38.50843313287705);
-    private LatLng p2 = new LatLng(-12.966330006283034, -38.414380385076704);
-    private LatLng p3 = new LatLng(-12.986981583564294, -38.48173967015339);
+    MarkerOptions[] p = {new MarkerOptions().position(new LatLng(-12.979091651458296, -38.50843313287705)).title("UBS Ramiro De Azevedo"),
+                         new MarkerOptions().position(new LatLng(-12.966330006283034, -38.414380385076704)).title("Unidade de Saúde da Familia Parque Pituaçu / Posto de Vacinação"),
+                         new MarkerOptions().position(new LatLng(-12.986981583564294, -38.48173967015339)).title("UBS Manoel Vitorino")};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +87,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void gerarRota(View view) {
         LatLng you = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        MarkerOptions voce = new MarkerOptions().position(you).
+                title("Você está aqui!").
+                icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
         mMap.animateCamera(CameraUpdateFactory.newLatLng(you));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(you,12));
-        mMap.addMarker(new MarkerOptions().position(p1).title("UBS Ramiro De Azevedo"));
-        mMap.addMarker(new MarkerOptions().position(p2).title("Unidade de Saúde da Familia Parque Pituaçu / Posto de Vacinação"));
-        mMap.addMarker(new MarkerOptions().position(p3).title("UBS Manoel Vitorino"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(you,15));
+        mMap.addMarker(p[0]);
+        mMap.addMarker(p[1]);
+        mMap.addMarker(p[2]);
     }
+
 }

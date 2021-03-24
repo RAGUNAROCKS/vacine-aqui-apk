@@ -15,3 +15,9 @@ Vacine Aqui 0.2
 - O mapa ao iniciar, só exibirá o marcador do usuário.
 - A cor do marcador foi modificada para laranja.
 - Ao clicar no botão, será exibido os marcadores dos postos de vacina.
+
+Vacine Aqui 0.3
+
+- Criação de um vetor de marcadores para indicar os postos de Saúde
+- Inclusão do minimap(icone) do VacineAqui
+- Modificações irrisorias no botão de rota.
