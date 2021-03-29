@@ -18,6 +18,14 @@ Vacine Aqui 0.2
 
 Vacine Aqui 0.3
 
-- Criação de um vetor de marcadores para indicar os postos de Saúde
-- Inclusão do minimap(icone) do VacineAqui
+- Criação de um vetor de marcadores para indicar os postos de Saúde.
+- Inclusão do minimap(icone) do VacineAqui.
 - Modificações irrisorias no botão de rota.
+
+Vacine Aqui 0.4
+
+- Adicionado a função de calculo de distancia entre os pontos
+- O Botão fab foi renomeado para geraRota
+- Adicionado a função de buscar o posto mais próximo no botão geraRota
+- Mudança na cor da localização do usuário, de laranja para ciano.
+- Realocação do botão geraRota para a tornar visivel o botão do google maps.
