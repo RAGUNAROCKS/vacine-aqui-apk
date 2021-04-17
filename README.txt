@@ -18,8 +18,8 @@ Vacine Aqui 0.2
 
 Vacine Aqui 0.3
 
-- Criação de um vetor de marcadores para indicar os postos de Saúde.
-- Inclusão do minimap(icone) do VacineAqui.
+- Criação de um vetor de marcadores para indicar os postos de Saúde
+- Inclusão do minimap(icone) do VacineAqui
 - Modificações irrisorias no botão de rota.
 
 Vacine Aqui 0.4
@@ -29,3 +29,12 @@ Vacine Aqui 0.4
 - Adicionado a função de buscar o posto mais próximo no botão geraRota
 - Mudança na cor da localização do usuário, de laranja para ciano.
 - Realocação do botão geraRota para a tornar visivel o botão do google maps.
+
+Vacine Aqui 0.5
+
+- Desenvolvimento do botão de menu (fabOpcoes), que gera outros outros botões, onde sera adicionados novas funções, além do geraRota.
+- O nome dos botões foram modificados para a inclusão do indicador fab (fabOpcoes, fabGeraRota, fabSituação).
+- Aplicação de um banco de dados para relacionar dados de cada marcador, substituindo o vetor de marcadores.
+- Adotado o modelo CRUD para a adminstração do aplicativo no banco de dados.
+- Inserido a verificação de disponibilidade do Posto de Saúde ao gerar a rota.
+- Atualização da lista do postos de vacina, baseado na lista do Vacinometro (https://filometro.saude.salvador.ba.gov.br/)

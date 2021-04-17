@@ -16,22 +16,57 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:context=".MapsActivity"
-        tools:layout="@layout/activity_maps"/>
+        tools:layout="@layout/activity_maps" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/geraRota"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="22dp"
         android:layout_marginBottom="66dp"
-        android:backgroundTint="#F44336"
-        android:clickable="true"
-        android:focusable="true"
-        android:onClick="gerarRota"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="#FFFFFF"
-        app:srcCompat="@android:drawable/ic_menu_compass"
-        tools:ignore="ContentDescription"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabSituacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/red"
+            android:clickable="true"
+            android:contentDescription="@string/fab"
+            android:focusable="true"
+            android:tint="@android:color/white"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toTopOf="@+id/fabGeraRota"
+            app:layout_constraintEnd_toEndOf="@+id/fabGeraRota"
+            app:srcCompat="@android:drawable/ic_menu_add" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabGeraRota"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/red"
+            android:clickable="true"
+            android:contentDescription="@string/fab"
+            android:focusable="true"
+            android:tint="@android:color/white"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toTopOf="@+id/fabOpcoes"
+            app:layout_constraintEnd_toEndOf="@+id/fabOpcoes"
+            app:srcCompat="@android:drawable/ic_menu_directions" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabOpcoes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/red"
+            android:clickable="true"
+            android:contentDescription="@string/fab"
+            android:focusable="true"
+            app:rippleColor="#FFFFFF"
+            app:srcCompat="@android:drawable/ic_input_add" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

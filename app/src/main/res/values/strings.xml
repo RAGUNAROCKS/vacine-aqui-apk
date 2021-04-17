@@ -2,4 +2,5 @@
     <string name="app_name">Vacine Aqui</string>
     <string name="title_activity_maps">VacineAqui</string>
     <string name="map_key" translatable="false"></string>
+    <string name="fab">TODO</string>
 </resources>
