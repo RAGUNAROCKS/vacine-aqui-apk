@@ -50,6 +50,8 @@ public class Read extends SQLiteOpenHelper {
                     p.setLatitude(c.getDouble(2));
                     p.setLongitude(c.getDouble(3));
                     p.setDisponibilidade(Boolean.parseBoolean(c.getString(4)));
+                    p.setPacientes(c.getInt(5));
+                    p.setEnfermeiros(c.getInt(6));
                     pArray.add(p);
                 }while(c.moveToNext());
                 c.close();

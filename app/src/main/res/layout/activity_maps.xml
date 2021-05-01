@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mapLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapsActivity">
@@ -11,14 +12,15 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:context=".MapsActivity"
         tools:layout="@layout/activity_maps" />
 
     <LinearLayout
+        android:id="@+id/opcoesLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="22dp"
@@ -29,44 +31,59 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/red_light"
+            android:clickable="true"
+            android:contentDescription="@string/fab"
+            android:focusable="true"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toTopOf="@+id/fabSituacao"
+            app:layout_constraintEnd_toEndOf="@+id/fabSituacao"
+            app:rippleColor="@color/gray"
+            app:srcCompat="@android:drawable/ic_menu_manage" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabSituacao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/red"
+            android:backgroundTint="@color/red_light"
             android:clickable="true"
             android:contentDescription="@string/fab"
             android:focusable="true"
-            android:tint="@android:color/white"
             app:fabSize="mini"
             app:layout_constraintBottom_toTopOf="@+id/fabGeraRota"
             app:layout_constraintEnd_toEndOf="@+id/fabGeraRota"
-            app:srcCompat="@android:drawable/ic_menu_add" />
+            app:rippleColor="@color/gray"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabGeraRota"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/red"
+            android:backgroundTint="@color/red_light"
             android:clickable="true"
             android:contentDescription="@string/fab"
             android:focusable="true"
-            android:tint="@android:color/white"
             app:fabSize="mini"
             app:layout_constraintBottom_toTopOf="@+id/fabOpcoes"
             app:layout_constraintEnd_toEndOf="@+id/fabOpcoes"
-            app:srcCompat="@android:drawable/ic_menu_directions" />
+            app:rippleColor="@color/gray"
+            app:srcCompat="@android:drawable/ic_menu_search" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabOpcoes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/red"
+            android:backgroundTint="@color/red_light"
             android:clickable="true"
             android:contentDescription="@string/fab"
             android:focusable="true"
-            app:rippleColor="#FFFFFF"
+            app:rippleColor="@color/gray"
             app:srcCompat="@android:drawable/ic_input_add" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

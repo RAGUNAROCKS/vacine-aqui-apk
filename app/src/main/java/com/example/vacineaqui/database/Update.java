@@ -41,6 +41,8 @@ public class Update extends SQLiteOpenHelper {
             cv.put("LATITUDE", p.getLatitude());
             cv.put("LONGITUDE", p.getLongitude());
             cv.put("DISPONIBILIDADE", String.valueOf(p.getDisponibilidade()));
+            cv.put("PACIENTES", p.getPacientes());
+            cv.put("ENFERMEIROS", p.getEnfermeiros());
             db.insert(TABELA_POSTOVACINA,null,cv);
             return true;
         }catch (Exception e){
@@ -61,6 +63,30 @@ public class Update extends SQLiteOpenHelper {
             cv.put("LATITUDE", p.getLatitude());
             cv.put("LONGITUDE", p.getLongitude());
             cv.put("DISPONIBILIDADE", String.valueOf(p.getDisponibilidade()));
+            cv.put("PACIENTES", p.getPacientes());
+            cv.put("ENFERMEIROS", p.getEnfermeiros());
+            db.update(TABELA_POSTOVACINA, cv, where, null);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }finally {
+            db.close();
+        }
+    }
+
+    public boolean updateFila(PostoDeVacina p, int modPacientes, int modEnfermeiros){
+        openDB();
+        try{
+            String where = "ID = '"+p.getId()+"'";
+            ContentValues cv = new ContentValues();
+            cv.put("ID", p.getId());
+            cv.put("NOME", p.getNome());
+            cv.put("LATITUDE", p.getLatitude());
+            cv.put("LONGITUDE", p.getLongitude());
+            cv.put("DISPONIBILIDADE", String.valueOf(p.getDisponibilidade()));
+            cv.put("PACIENTES", p.getPacientes() + modPacientes);
+            cv.put("ENFERMEIROS", p.getEnfermeiros() + modEnfermeiros);
             db.update(TABELA_POSTOVACINA, cv, where, null);
             return true;
         }catch (Exception e){

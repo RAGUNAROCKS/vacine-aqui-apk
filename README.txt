@@ -38,3 +38,14 @@ Vacine Aqui 0.5
 - Adotado o modelo CRUD para a adminstração do aplicativo no banco de dados.
 - Inserido a verificação de disponibilidade do Posto de Saúde ao gerar a rota.
 - Atualização da lista do postos de vacina, baseado na lista do Vacinometro (https://filometro.saude.salvador.ba.gov.br/)
+
+Vacine Aqui 0.6
+
+- Criação do botão fabUsuario, que exibe a janela de login(login_dialog).
+- Foi desenvolvido a aplicação de controle de fila (Filômetro), que é conectado a janela de login.
+- Para acessar o Filômetro, coloque o id do posto (de 0 à 28), e provisóriamente a senha está padronizada para '1234'.
+- No filometro, poderá modificar o numero de pacientes, enfermeiros e se o local está aberto e fechado.
+    - Foi criado um bloqueio nos botões para acionar eles, só quando o posto estiver aberto.
+    - Foi criado um bloqueio no botão Salvar(btnSalvar), para que não gere numero de clientes negativos e enfermeiros menores ou iguais a zero.
+- O botão geraRota, agora considera a quantidade de pessoas na fila, relacionado a quantidadede pacientes para a quantidade de enfermeiros do posto.
+- Icones dos botões modificados, para facil entendimento das ações.

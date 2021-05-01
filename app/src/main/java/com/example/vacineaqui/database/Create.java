@@ -9,7 +9,7 @@ public class Create extends SQLiteOpenHelper {
     private static final String NOME_DB = "BancoPosto";
     private static final int VERSAO_DB = 1;
     private static final String TABELA_POSTOVACINA = "PostoVacina";
-    private static final String PATH_DB = "/data/user/0/com.example.vacineaqui/database";
+    private static final String PATH_DB = "/data/user/0/com.example.vacineaqui/database/BancoPosto";
     private Context contexto;
     private SQLiteDatabase db;
 
@@ -36,7 +36,9 @@ public class Create extends SQLiteOpenHelper {
                 "NOME TEXT," +
                 "LATITUDE DOUBLE  NOT NULL," +
                 "LONGITUDE DOUBLE  NOT NULL," +
-                "DISPONIBILIDADE TEXT NOT NULL)";
+                "DISPONIBILIDADE TEXT NOT NULL," +
+                "PACIENTES INTEGER NOT NULL," +
+                "ENFERMEIROS INTEGER NOT NULL)";
         try{
             db.execSQL(createTable);
             return true;
