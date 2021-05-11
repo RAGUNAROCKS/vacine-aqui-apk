@@ -49,3 +49,10 @@ Vacine Aqui 0.6
     - Foi criado um bloqueio no botão Salvar(btnSalvar), para que não gere numero de clientes negativos e enfermeiros menores ou iguais a zero.
 - O botão geraRota, agora considera a quantidade de pessoas na fila, relacionado a quantidadede pacientes para a quantidade de enfermeiros do posto.
 - Icones dos botões modificados, para facil entendimento das ações.
+
+Vacine Aqui 0.7
+
+- Criação da pasta DatabaseNode que possui os codigos de conexão com o Servidor Node.JS.
+- A pasta database foi renomeada para DatabaseLocal.
+- O Banco de dados Local serve como busca rápida, enquanto o banco de dados do Node, serve para transmitir e atualizar as informações dos postos.
+- Criado o campo Senha no banco de dados.

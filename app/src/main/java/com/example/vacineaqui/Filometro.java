@@ -8,21 +8,33 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.vacineaqui.database.Read;
-import com.example.vacineaqui.database.Update;
+import com.example.vacineaqui.databaseLocal.Update;
+import com.example.vacineaqui.databaseNode.NodeConnection;
+import com.example.vacineaqui.databaseNode.PostoDeVacina;
+import com.example.vacineaqui.databaseNode.RetrofitInterface;
 
-import java.util.List;
+import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Filometro extends Activity implements View.OnClickListener {
     Button btnAddPacientes, btnSubPacientes, btnAddEnfermeiros, btnSubEnfermeiros, btnSalvar, btnFecharPosto, btnSair;
-    TextView lblQtdPacientes, lblQtdEnfermeiros, postoText, PacientesText, EnfermeirosText, disponibilidadeText;
-    private int QTDPACIENTES = 0, QTDENFERMEIROS = 0, ID, BACKUP;
-    List<PostoDeVacina> pLista;
+    TextView lblQtdPacientes, lblQtdEnfermeiros, postoText, pacientesText, enfermeirosText, disponibilidadeText;
+    private Retrofit retrofit; private RetrofitInterface retrofitInterface; private String BASE_URL = "http://10.0.2.2:3000";
+    private int QTDPACIENTES = 0, QTDENFERMEIROS = 0, ID; PostoDeVacina result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filometro_dialog);
+        retrofit = new Retrofit.Builder().baseUrl(BASE_URL).
+                addConverterFactory(GsonConverterFactory.create()).
+                build();
+        retrofitInterface = retrofit.create(RetrofitInterface.class);
 
         modPacientes();
         modEnfermeiros();
@@ -33,24 +45,41 @@ public class Filometro extends Activity implements View.OnClickListener {
 
         if(parametros != null) {
             ID = parametros.getInt("ID");
+            HashMap<String, String> map = new HashMap<>();
+            map.put("id", Integer.toString(ID));
+            Call<PostoDeVacina> call = retrofitInterface.executeFind(map);
+            call.enqueue(new Callback<PostoDeVacina>() {
+                @Override
+                public void onResponse(Call<PostoDeVacina> call, Response<PostoDeVacina> response) {
+                    if(response.code() == 200) {
+                        result = response.body();
+                        mostrarDados();
+                    }else if(response.code() == 404){
+                        Toast.makeText(Filometro.this, "Usuário não encontrado", Toast.LENGTH_LONG).show();
+                    }
+                }
 
-            Read r = new Read(getApplicationContext());
-            pLista = r.buscarTodos();
-
-            postoText = findViewById(R.id.postoText);
-            PacientesText = findViewById(R.id.pacientesText);
-            EnfermeirosText = findViewById(R.id.enfermeirosText);
-            disponibilidadeText = findViewById(R.id.disponibilidadeText);
-
-            postoText.setText(pLista.get(ID).getNome());
-            PacientesText.setText(Integer.toString(pLista.get(ID).getPacientes()));
-            EnfermeirosText.setText(Integer.toString(pLista.get(ID).getEnfermeiros()));
-            disponibilidadeText.setText(vacinação(pLista.get(ID).getDisponibilidade()));
-
+                @Override
+                public void onFailure(Call<PostoDeVacina> call, Throwable t) {
+                    Toast.makeText(Filometro.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
-    public String vacinação(boolean d){ if(d) return "Sim"; else return "Não";}
+    private String vacinação(boolean d){ if(d) return "Sim"; else return "Não";}
+
+    private void mostrarDados(){
+        postoText = findViewById(R.id.postoText);
+        pacientesText = findViewById(R.id.pacientesText);
+        enfermeirosText = findViewById(R.id.enfermeirosText);
+        disponibilidadeText = findViewById(R.id.disponibilidadeText);
+
+        postoText.setText(result.getNome());
+        pacientesText.setText(Integer.toString(result.getPacientes()));
+        enfermeirosText.setText(Integer.toString(result.getEnfermeiros()));
+        disponibilidadeText.setText(vacinação(result.getDisponibilidade()));
+    }
 
     private void modPacientes(){
         lblQtdPacientes = findViewById(R.id.lblQtdPacientes);
@@ -81,48 +110,60 @@ public class Filometro extends Activity implements View.OnClickListener {
         btnFecharPosto.setOnClickListener(this);
         btnSair.setOnClickListener(this);
     }
+
+
     @Override
     public void onClick(View v) {
         Update u = new Update(getApplicationContext());
         switch (v.getId()){
             case R.id.btnAddPacientes:
-                if(pLista.get(ID).getDisponibilidade()) QTDPACIENTES++;
+                if(result.getDisponibilidade()) QTDPACIENTES++;
                 lblQtdPacientes.setText(Integer.toString(QTDPACIENTES));
                 break;
             case R.id.btnSubPacientes:
-                if(pLista.get(ID).getDisponibilidade()) QTDPACIENTES--;
+                if(result.getDisponibilidade()) QTDPACIENTES--;
                 lblQtdPacientes.setText(Integer.toString(QTDPACIENTES));
                 break;
             case R.id.btnAddEnfermeiros:
-                if(pLista.get(ID).getDisponibilidade()) QTDENFERMEIROS++;
+                if(result.getDisponibilidade()) QTDENFERMEIROS++;
                 lblQtdEnfermeiros.setText(Integer.toString(QTDENFERMEIROS));
                 break;
             case R.id.btnSubEnfermeiros:
-                if(pLista.get(ID).getDisponibilidade()) QTDENFERMEIROS--;
+                if(result.getDisponibilidade()) QTDENFERMEIROS--;
                 lblQtdEnfermeiros.setText(Integer.toString(QTDENFERMEIROS));
                 break;
             case R.id.btnSalvar:
-                if(pLista.get(ID).getPacientes() + QTDPACIENTES >= 0 && pLista.get(ID).getEnfermeiros() + QTDENFERMEIROS > 0){
-                    u.updateFila(pLista.get(ID),QTDPACIENTES,QTDENFERMEIROS);
-                    Intent salvar = new Intent(getApplicationContext(), MapsActivity.class);
-                    startActivity(salvar);
+                NodeConnection nodeSalvar = new NodeConnection();
+                if(result.getPacientes() + QTDPACIENTES >= 0 && result.getEnfermeiros() + QTDENFERMEIROS > 0){
+                    HashMap<String, String> salvar = new HashMap<>();
+                    salvar.put("id", Integer.toString(ID));
+                    salvar.put("disponibilidade", String.valueOf(result.getDisponibilidade()));
+                    salvar.put("pacientes", Integer.toString((result.getPacientes() + QTDPACIENTES)));
+                    salvar.put("enfermeiros", Integer.toString((result.getEnfermeiros() + QTDENFERMEIROS)));
+                    nodeSalvar.salvarFilometro(retrofitInterface, salvar, getApplicationContext());
                 }else{
                     Toast.makeText(getApplicationContext(), "Redução ultrapassa a quantidade de pessoas", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.btnFecharPosto:
-                if(pLista.get(ID).getDisponibilidade()){
-                    pLista.get(ID).setPacientes(0);
-                    pLista.get(ID).setDisponibilidade(false);
-                    u.update(pLista.get(ID));
+                NodeConnection nodeSitPosto = new NodeConnection();
+                if(result.getDisponibilidade() == true){
+                    HashMap<String, String> estPosto = new HashMap<>();
+                    estPosto.put("id", Integer.toString(ID));
+                    estPosto.put("disponibilidade", String.valueOf(false));
+                    estPosto.put("pacientes", Integer.toString((0)));
+                    estPosto.put("enfermeiros", Integer.toString((result.getEnfermeiros())));
+                    nodeSitPosto.dispPosto(retrofitInterface, estPosto, getApplicationContext(), false);
                     Toast.makeText(getApplicationContext(), "Posto Fechado", Toast.LENGTH_SHORT).show();
-                }else{
-                    pLista.get(ID).setDisponibilidade(true);
-                    u.update(pLista.get(ID));
+                }else {
+                    HashMap<String, String> estPosto = new HashMap<>();
+                    estPosto.put("id", Integer.toString(ID));
+                    estPosto.put("disponibilidade", String.valueOf(true));
+                    estPosto.put("pacientes", Integer.toString((0)));
+                    estPosto.put("enfermeiros", Integer.toString((result.getEnfermeiros())));
+                    nodeSitPosto.dispPosto(retrofitInterface, estPosto, getApplicationContext(), true);
                     Toast.makeText(getApplicationContext(), "Posto Aberto", Toast.LENGTH_SHORT).show();
                 }
-                Intent fecharPosto = new Intent(getApplicationContext(), MapsActivity.class);
-                startActivity(fecharPosto);
                 break;
             case R.id.btnSair:
                 Intent sair = new Intent(getApplicationContext(), MapsActivity.class);
