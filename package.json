@@ -15,10 +15,9 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "typescript": "^4.1.5",
+    "mongodb": "latest",
     "mongoose": "latest",
-    "mongodb":"latest"
+    "typescript": "^4.1.5"
   },
   "bugs": {
     "url": "https://github.com/RAGUNAROCKS/vacine-aqui-apk/issues"

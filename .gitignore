@@ -1,4 +1,5 @@
 *.iml
+.package-lock.json
 /node_modules
 .gradle
 /local.properties
