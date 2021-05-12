@@ -16,7 +16,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "typescript": "^4.1.5"
+    "typescript": "^4.1.5",
+    "mongoose": "latest",
+    "mongodb":"latest"
   },
   "bugs": {
     "url": "https://github.com/RAGUNAROCKS/vacine-aqui-apk/issues"
