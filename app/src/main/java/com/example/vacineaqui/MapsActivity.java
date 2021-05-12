@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
-    private final String BASE_URL = "http://10.0.2.2:3000";
+    private final String BASE_URL = "https://vacineaqui.herokuapp.com/";
 
     boolean isMenuOpen = false;
     private static final String TAG = "test";
