@@ -19,7 +19,7 @@ public interface RetrofitInterface {
     @POST("/filometro")
     Call<Void> executeFilometro(@Body HashMap<String, String> map);
 
-    @GET("/findAll")
+    @GET("/")
     Call<List<PostoDeVacina>> executeFindAll();
 
 }
