@@ -82,7 +82,7 @@ mongoClient.connect(url, (err, db) => {
                     })
                 })
 
-        app.get('/', (req, res) =>{
+        app.get('/findall', (req, res) =>{
                             collection.find().toArray(function (err, result){
                             if(result != null){
                                 res.status(200).send(result)
