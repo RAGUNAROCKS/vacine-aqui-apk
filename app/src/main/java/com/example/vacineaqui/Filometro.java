@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Filometro extends Activity implements View.OnClickListener {
     Button btnAddPacientes, btnSubPacientes, btnAddEnfermeiros, btnSubEnfermeiros, btnSalvar, btnFecharPosto, btnSair;
     TextView lblQtdPacientes, lblQtdEnfermeiros, postoText, pacientesText, enfermeirosText, disponibilidadeText;
-    private Retrofit retrofit; private RetrofitInterface retrofitInterface; private String BASE_URL = "http://10.0.2.2:3000";
+    private Retrofit retrofit; private RetrofitInterface retrofitInterface; private final String BASE_URL = "https://vacineaqui.herokuapp.com/";
     private int QTDPACIENTES = 0, QTDENFERMEIROS = 0, ID; PostoDeVacina result;
 
     @Override
