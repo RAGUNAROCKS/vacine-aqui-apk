@@ -1,1 +1,1 @@
-web: node app.js
+web: node ../app/src/main/java/com/example/vacineaqui/databaseNode/app.js
