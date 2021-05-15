@@ -11,30 +11,22 @@ import android.widget.Toast;
 import com.example.vacineaqui.databaseLocal.Update;
 import com.example.vacineaqui.databaseNode.NodeConnection;
 import com.example.vacineaqui.databaseNode.PostoDeVacina;
-import com.example.vacineaqui.databaseNode.RetrofitInterface;
 
 import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Filometro extends Activity implements View.OnClickListener {
     Button btnAddPacientes, btnSubPacientes, btnAddEnfermeiros, btnSubEnfermeiros, btnSalvar, btnFecharPosto, btnSair;
     TextView lblQtdPacientes, lblQtdEnfermeiros, postoText, pacientesText, enfermeirosText, disponibilidadeText;
-    private Retrofit retrofit; private RetrofitInterface retrofitInterface; private final String BASE_URL = "https://vacineaqui.herokuapp.com/";
     private int QTDPACIENTES = 0, QTDENFERMEIROS = 0, ID; PostoDeVacina result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filometro_dialog);
-        retrofit = new Retrofit.Builder().baseUrl(BASE_URL).
-                addConverterFactory(GsonConverterFactory.create()).
-                build();
-        retrofitInterface = retrofit.create(RetrofitInterface.class);
 
         modPacientes();
         modEnfermeiros();
@@ -47,7 +39,7 @@ public class Filometro extends Activity implements View.OnClickListener {
             ID = parametros.getInt("ID");
             HashMap<String, String> map = new HashMap<>();
             map.put("id", Integer.toString(ID));
-            Call<PostoDeVacina> call = retrofitInterface.executeFind(map);
+            Call<PostoDeVacina> call = MapsActivity.retrofitInterface.executeFind(map);
             call.enqueue(new Callback<PostoDeVacina>() {
                 @Override
                 public void onResponse(Call<PostoDeVacina> call, Response<PostoDeVacina> response) {
@@ -140,7 +132,7 @@ public class Filometro extends Activity implements View.OnClickListener {
                     salvar.put("disponibilidade", String.valueOf(result.getDisponibilidade()));
                     salvar.put("pacientes", Integer.toString((result.getPacientes() + QTDPACIENTES)));
                     salvar.put("enfermeiros", Integer.toString((result.getEnfermeiros() + QTDENFERMEIROS)));
-                    nodeSalvar.salvarFilometro(retrofitInterface, salvar, getApplicationContext());
+                    nodeSalvar.salvarFilometro(MapsActivity.retrofitInterface, salvar, getApplicationContext());
                 }else{
                     Toast.makeText(getApplicationContext(), "Redução ultrapassa a quantidade de pessoas", Toast.LENGTH_SHORT).show();
                 }
@@ -153,7 +145,7 @@ public class Filometro extends Activity implements View.OnClickListener {
                     estPosto.put("disponibilidade", String.valueOf(false));
                     estPosto.put("pacientes", Integer.toString((0)));
                     estPosto.put("enfermeiros", Integer.toString((result.getEnfermeiros())));
-                    nodeSitPosto.dispPosto(retrofitInterface, estPosto, getApplicationContext(), false);
+                    nodeSitPosto.dispPosto(MapsActivity.retrofitInterface, estPosto, getApplicationContext(), false);
                     Toast.makeText(getApplicationContext(), "Posto Fechado", Toast.LENGTH_SHORT).show();
                 }else {
                     HashMap<String, String> estPosto = new HashMap<>();
@@ -161,7 +153,7 @@ public class Filometro extends Activity implements View.OnClickListener {
                     estPosto.put("disponibilidade", String.valueOf(true));
                     estPosto.put("pacientes", Integer.toString((0)));
                     estPosto.put("enfermeiros", Integer.toString((result.getEnfermeiros())));
-                    nodeSitPosto.dispPosto(retrofitInterface, estPosto, getApplicationContext(), true);
+                    nodeSitPosto.dispPosto(MapsActivity.retrofitInterface, estPosto, getApplicationContext(), true);
                     Toast.makeText(getApplicationContext(), "Posto Aberto", Toast.LENGTH_SHORT).show();
                 }
                 break;
