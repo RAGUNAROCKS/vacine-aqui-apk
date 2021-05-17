@@ -26,6 +26,10 @@ public class NodeConnection {
                     Intent intent = new Intent(context, Filometro.class);
                     Bundle parametros = new Bundle();
                     parametros.putInt("ID", result.getId());
+                    parametros.putString("NOME", result.getNome());
+                    parametros.putBoolean("DISPONIBILIDADE", result.getDisponibilidade());
+                    parametros.putInt("PACIENTES", result.getPacientes());
+                    parametros.putInt("ENFERMEIROS", result.getEnfermeiros());
                     intent.putExtras(parametros);
                     context.startActivity(intent);
                 }else if(response.code() == 404){
@@ -41,8 +45,8 @@ public class NodeConnection {
     }
 
     public void salvarFilometro(RetrofitInterface retrofitInterface, HashMap<String, String> map, Context context){
-        Call<Void> callS = retrofitInterface.executeFilometro(map);
-        callS.enqueue(new Callback<Void>() {
+        Call<Void> call = retrofitInterface.executeFilometro(map);
+        call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200) {
@@ -62,8 +66,8 @@ public class NodeConnection {
     }
 
     public void dispPosto(RetrofitInterface retrofitInterface, HashMap<String, String> map, Context context, boolean aberto){
-        Call<Void> callS = retrofitInterface.executeFilometro(map);
-        callS.enqueue(new Callback<Void>() {
+        Call<Void> call = retrofitInterface.executeFilometro(map);
+        call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200) {

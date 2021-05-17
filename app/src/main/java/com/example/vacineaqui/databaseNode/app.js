@@ -50,7 +50,10 @@ mongoClient.connect(url, (err, db) => {
                 if(result != null) {
                    const objToSend = {
                        id: result.id,
-                       senha: result.senha
+                       nome: result.nome,
+                       disponibilidade: result.disponibilidade,
+                       pacientes: result.pacientes,
+                       enfermeiros: result.enfermeiros
                    }
                     res.status(200).send(JSON.stringify(objToSend))
                 } else {

@@ -46,7 +46,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
+
     private static final int REQUEST_CODE = 101;
+    private static final int LOGIN_CODE = 100;
 
     private Retrofit retrofit;
     public static RetrofitInterface retrofitInterface;
@@ -169,6 +171,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 fetchLastLocation();
             }
+        }else if(requestCode == LOGIN_CODE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mostrarLogin();
+            }
         }
     }
 
@@ -224,6 +230,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void mostrarLogin(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, LOGIN_CODE);
+            return;
+        }
         View v = getLayoutInflater().inflate(R.layout.login_dialog, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(v).show();

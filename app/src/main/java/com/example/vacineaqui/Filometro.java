@@ -14,10 +14,6 @@ import com.example.vacineaqui.databaseNode.PostoDeVacina;
 
 import java.util.HashMap;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class Filometro extends Activity implements View.OnClickListener {
     Button btnAddPacientes, btnSubPacientes, btnAddEnfermeiros, btnSubEnfermeiros, btnSalvar, btnFecharPosto, btnSair;
     TextView lblQtdPacientes, lblQtdEnfermeiros, postoText, pacientesText, enfermeirosText, disponibilidadeText;
@@ -36,26 +32,16 @@ public class Filometro extends Activity implements View.OnClickListener {
         Bundle parametros = filometro.getExtras();
 
         if(parametros != null) {
-            ID = parametros.getInt("ID");
-            HashMap<String, String> map = new HashMap<>();
-            map.put("id", Integer.toString(ID));
-            Call<PostoDeVacina> call = MapsActivity.retrofitInterface.executeFind(map);
-            call.enqueue(new Callback<PostoDeVacina>() {
-                @Override
-                public void onResponse(Call<PostoDeVacina> call, Response<PostoDeVacina> response) {
-                    if(response.code() == 200) {
-                        result = response.body();
-                        mostrarDados();
-                    }else if(response.code() == 404){
-                        Toast.makeText(Filometro.this, "Usuário não encontrado", Toast.LENGTH_LONG).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<PostoDeVacina> call, Throwable t) {
-                    Toast.makeText(Filometro.this, t.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
+            result.setPostoDeVacina(
+                    parametros.getInt("ID"),
+                    "******",
+                    parametros.getString("NOME"),
+                    0,
+                    0,
+                    parametros.getBoolean("DISPONIBILIDADE"),
+                    parametros.getInt("PACIENTES"),
+                    parametros.getInt("ENFERMEIROS"));
+            mostrarDados();
         }
     }
 
