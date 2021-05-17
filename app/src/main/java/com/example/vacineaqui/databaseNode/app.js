@@ -62,29 +62,6 @@ mongoClient.connect(url, (err, db) => {
             })
         })
 
-        app.post('/find', (req, res) =>{
-
-                    const query = {
-                        id: req.body.id
-                    }
-
-                    collection.findOne(query, (err, result) => {
-                        if(result != null) {
-                           const objToSend = {
-                               nome: result.nome,
-                               latitude: result.latitude,
-                               longitude: result.longitude,
-                               disponibilidade: result.disponibilidade,
-                               pacientes: result.pacientes,
-                               enfermeiros: result.enfermeiros
-                           }
-                            res.status(200).send(JSON.stringify(objToSend))
-                        } else {
-                            res.status(404).send()
-                        }
-                    })
-                })
-
         app.get('/findall', (req, res) =>{
                             collection.find().toArray(function (err, result){
                             if(result != null){

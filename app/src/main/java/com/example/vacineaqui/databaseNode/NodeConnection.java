@@ -31,6 +31,7 @@ public class NodeConnection {
                     parametros.putInt("PACIENTES", result.getPacientes());
                     parametros.putInt("ENFERMEIROS", result.getEnfermeiros());
                     intent.putExtras(parametros);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }else if(response.code() == 404){
                     Toast.makeText(context, "Usuário Inválido", Toast.LENGTH_LONG).show();
@@ -51,6 +52,7 @@ public class NodeConnection {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200) {
                     Intent salvar = new Intent(context, MapsActivity.class);
+                    salvar.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(salvar);
                     Toast.makeText(context, "Registro Salvo", Toast.LENGTH_LONG).show();
                 }else if(response.code() == 404){
@@ -72,6 +74,7 @@ public class NodeConnection {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200) {
                     Intent salvar = new Intent(context, MapsActivity.class);
+                    salvar.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(salvar);
                     if(aberto) Toast.makeText(context, "Posto Aberto", Toast.LENGTH_LONG).show();
                     else Toast.makeText(context, "Posto Fechado", Toast.LENGTH_LONG).show();

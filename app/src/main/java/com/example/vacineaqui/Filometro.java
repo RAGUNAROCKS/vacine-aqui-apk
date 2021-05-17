@@ -32,8 +32,9 @@ public class Filometro extends Activity implements View.OnClickListener {
         Bundle parametros = filometro.getExtras();
 
         if(parametros != null) {
-            result.setPostoDeVacina(
-                    parametros.getInt("ID"),
+            ID = parametros.getInt("ID");
+            result = new PostoDeVacina();
+            result.setPostoDeVacina(ID,
                     "******",
                     parametros.getString("NOME"),
                     0,
@@ -145,6 +146,7 @@ public class Filometro extends Activity implements View.OnClickListener {
                 break;
             case R.id.btnSair:
                 Intent sair = new Intent(getApplicationContext(), MapsActivity.class);
+                sair.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(sair);
                 break;
         }

@@ -13,9 +13,6 @@ public interface RetrofitInterface {
     @POST("/login")
     Call<PostoDeVacina> executeLogin(@Body HashMap<String, String> map);
 
-    @POST("/find")
-    Call<PostoDeVacina> executeFind(@Body HashMap<String, String> map);
-
     @POST("/filometro")
     Call<Void> executeFilometro(@Body HashMap<String, String> map);
 

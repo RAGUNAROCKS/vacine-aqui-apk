@@ -230,10 +230,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void mostrarLogin(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, LOGIN_CODE);
-            return;
-        }
         View v = getLayoutInflater().inflate(R.layout.login_dialog, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(v).show();
