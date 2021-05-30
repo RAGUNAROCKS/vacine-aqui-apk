@@ -19,71 +19,66 @@
         tools:context=".MapsActivity"
         tools:layout="@layout/activity_maps" />
 
-    <LinearLayout
-        android:id="@+id/opcoesLayout"
+    <SearchView
+        android:id="@+id/pesquisaPosto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:background="#FFFFFF"
+        android:queryHint="Qual posto você procura?"
+        android:gravity="start"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fabOpcoes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="22dp"
+        android:layout_marginEnd="18dp"
         android:layout_marginBottom="66dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:src="@android:drawable/ic_input_add"
+        app:menu_buttonSpacing="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu_shadowColor="#444"
+        app:menu_labels_colorNormal="@color/black"
+        app:menu_labels_textColor="@color/white"
+        app:menu_colorNormal="@color/red_light_button"
+        app:menu_colorPressed="@color/red_light_ripped"
+        app:menu_colorRipple="@color/blue_gray">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabUsuario"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/red_light"
-            android:clickable="true"
-            android:contentDescription="@string/fab"
-            android:focusable="true"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/fabSituacao"
-            app:layout_constraintEnd_toEndOf="@+id/fabSituacao"
-            app:rippleColor="@color/gray"
-            app:srcCompat="@android:drawable/ic_menu_manage" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabSituacao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/red_light"
-            android:clickable="true"
-            android:contentDescription="@string/fab"
-            android:focusable="true"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/fabGeraRota"
-            app:layout_constraintEnd_toEndOf="@+id/fabGeraRota"
-            app:rippleColor="@color/gray"
-            app:srcCompat="@android:drawable/ic_dialog_map" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fabGeraRota"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/red_light"
-            android:clickable="true"
-            android:contentDescription="@string/fab"
-            android:focusable="true"
-            app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/fabOpcoes"
-            app:layout_constraintEnd_toEndOf="@+id/fabOpcoes"
-            app:rippleColor="@color/gray"
-            app:srcCompat="@android:drawable/ic_menu_search" />
+            android:src="@android:drawable/ic_menu_search"
+            app:fab_label="Posto Ideal"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/red_light_button"
+            app:fab_colorPressed="@color/red_light_ripped"
+            app:fab_colorRipple="@color/blue_gray"/>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabOpcoes"
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabSituacao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/red_light"
-            android:clickable="true"
-            android:contentDescription="@string/fab"
-            android:focusable="true"
-            app:rippleColor="@color/gray"
-            app:srcCompat="@android:drawable/ic_input_add" />
-    </LinearLayout>
+            android:src="@android:drawable/ic_dialog_map"
+            app:fab_label="Mapa"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/red_light_button"
+            app:fab_colorPressed="@color/red_light_ripped"
+            app:fab_colorRipple="@color/blue_gray"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_manage"
+            app:fab_label="Filômetro"
+            app:fab_size="mini"
+            app:fab_colorNormal="@color/red_light_button"
+            app:fab_colorPressed="@color/red_light_ripped"
+            app:fab_colorRipple="@color/blue_gray"/>
+    </com.github.clans.fab.FloatingActionMenu>
 </androidx.constraintlayout.widget.ConstraintLayout>

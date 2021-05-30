@@ -53,6 +53,39 @@ public class Read extends SQLiteOpenHelper {
                     p.setDisponibilidade(Boolean.parseBoolean(c.getString(5)));
                     p.setPacientes(c.getInt(6));
                     p.setEnfermeiros(c.getInt(7));
+                    p.setInfo(c.getString(8));
+                    pArray.add(p);
+                }while(c.moveToNext());
+                c.close();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }finally {
+            db.close();
+        }
+        return pArray;
+    }
+
+    public List<PostoDeVacina> buscarSemelhante(String SEARCH){
+        List<PostoDeVacina> pArray = new ArrayList<>();
+        openDB();
+        String busca = "SELECT * FROM "+TABELA_POSTOVACINA+" WHERE NOME LIKE '%"+SEARCH+"%' OR INFO LIKE '%"+SEARCH+"%'";
+
+        try{
+            Cursor c = db.rawQuery(busca,null);
+            if(c.moveToFirst()){
+                do{
+                    PostoDeVacina p = new PostoDeVacina();
+                    p.setId(c.getInt(0));
+                    p.setSenha(c.getString(1));
+                    p.setNome(c.getString(2));
+                    p.setLatitude(c.getDouble(3));
+                    p.setLongitude(c.getDouble(4));
+                    p.setDisponibilidade(Boolean.parseBoolean(c.getString(5)));
+                    p.setPacientes(c.getInt(6));
+                    p.setEnfermeiros(c.getInt(7));
+                    p.setInfo(c.getString(8));
                     pArray.add(p);
                 }while(c.moveToNext());
                 c.close();

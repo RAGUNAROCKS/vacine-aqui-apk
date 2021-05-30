@@ -39,7 +39,8 @@ public class Create extends SQLiteOpenHelper {
                 "LONGITUDE DOUBLE  NOT NULL," +
                 "DISPONIBILIDADE TEXT NOT NULL," +
                 "PACIENTES INTEGER NOT NULL," +
-                "ENFERMEIROS INTEGER NOT NULL)";
+                "ENFERMEIROS INTEGER NOT NULL," +
+                "INFO TEXT)";
         try{
             db.execSQL(createTable);
             return true;

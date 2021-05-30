@@ -58,7 +58,7 @@ public class Update extends SQLiteOpenHelper {
                             p.put("DISPONIBILIDADE", String.valueOf(result.get(i).getDisponibilidade()));
                             p.put("PACIENTES", result.get(i).getPacientes());
                             p.put("ENFERMEIROS", result.get(i).getEnfermeiros());
-                            System.out.println(result.get(i).getId());
+                            p.put("INFO", result.get(i).getInfo());
                             db.insert(TABELA_POSTOVACINA,null,p);
                     }
                 } else if (response.code() == 404) {
@@ -91,6 +91,7 @@ public class Update extends SQLiteOpenHelper {
                         p.put("DISPONIBILIDADE", String.valueOf(result.get(i).getDisponibilidade()));
                         p.put("PACIENTES", result.get(i).getPacientes());
                         p.put("ENFERMEIROS", result.get(i).getEnfermeiros());
+                        p.put("INFO", result.get(i).getInfo());
                         System.out.println(result.get(i).getId()+" "+result.get(i).getNome());
                         String where = "ID = '"+result.get(i).getId()+"'";
                         db.update(TABELA_POSTOVACINA, p, where, null);

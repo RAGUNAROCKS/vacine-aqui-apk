@@ -41,7 +41,8 @@ public class Filometro extends Activity implements View.OnClickListener {
                     0,
                     parametros.getBoolean("DISPONIBILIDADE"),
                     parametros.getInt("PACIENTES"),
-                    parametros.getInt("ENFERMEIROS"));
+                    parametros.getInt("ENFERMEIROS"),
+                    parametros.getString("INFO"));
             mostrarDados();
         }
     }

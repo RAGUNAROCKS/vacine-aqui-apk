@@ -11,6 +11,7 @@ public class PostoDeVacina {
     private boolean disponibilidade;
     private int pacientes;
     private int enfermeiros;
+    private String info;
 
     public int getId(){ return id; }
     public String getSenha() { return senha; }
@@ -20,6 +21,7 @@ public class PostoDeVacina {
     public boolean getDisponibilidade(){ return disponibilidade; }
     public int getPacientes(){ return pacientes; }
     public int getEnfermeiros(){ return enfermeiros; }
+    public String getInfo(){ return info; }
     public LatLng getPosicao(){ return new LatLng(latitude,longitude);}
 
     public void setId(int id){ this.id = id; }
@@ -30,9 +32,10 @@ public class PostoDeVacina {
     public void setDisponibilidade(boolean disponibilidade){ this.disponibilidade = disponibilidade; }
     public void setPacientes(int pacientes){ this.pacientes = pacientes; }
     public void setEnfermeiros(int enfermeiros){ this.enfermeiros = enfermeiros; }
-    public void setPostoDeVacina(int id, String senha, String nome, double latitude, double longitude, boolean disponibilidade, int pacientes, int enfermeiros){
+    public void setInfo(String info){ this.info = info; }
+    public void setPostoDeVacina(int id, String senha, String nome, double latitude, double longitude, boolean disponibilidade, int pacientes, int enfermeiros, String info){
         this.id = id; this.senha = senha; this.nome = nome; this.latitude = latitude; this.longitude = longitude;
-        this.disponibilidade = disponibilidade; this.pacientes = pacientes; this.enfermeiros = enfermeiros;
+        this.disponibilidade = disponibilidade; this.pacientes = pacientes; this.enfermeiros = enfermeiros; this.info = info;
     }
 
 }

@@ -2,14 +2,18 @@ package com.example.vacineaqui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +27,8 @@ import com.example.vacineaqui.databaseLocal.Update;
 import com.example.vacineaqui.databaseNode.NodeConnection;
 import com.example.vacineaqui.databaseNode.PostoDeVacina;
 import com.example.vacineaqui.databaseNode.RetrofitInterface;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,9 +37,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,47 +52,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
-
     private static final int REQUEST_CODE = 101;
-    private static final int LOGIN_CODE = 100;
 
     private Retrofit retrofit;
     public static RetrofitInterface retrofitInterface;
     private String BASE_URL = "https://vacineaqui.herokuapp.com/";
 
-    boolean isMenuOpen = false;
+
     private static final String TAG = "test";
-    FloatingActionButton fabOpcoes, fabGeraRota, fabSituacao, fabUsuario;
+    SearchView pesquisaPosto;
+    FloatingActionMenu fabOpcoes;
+    FloatingActionButton fabGeraRota, fabSituacao, fabUsuario;
     OvershootInterpolator interpolator = new OvershootInterpolator();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        initFabMenu();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         fetchLastLocation();
         retrofit = new Retrofit.Builder().baseUrl(BASE_URL).
                 addConverterFactory(GsonConverterFactory.create()).
                 build();
         retrofitInterface = retrofit.create(RetrofitInterface.class);
-        Create c = new Create(getApplicationContext());
-        c.createTable();
-        Read r = new Read(getApplicationContext());
-        List<PostoDeVacina> pLista = r.buscarTodos();
-        Update u = new Update(getApplicationContext());
-        if(pLista.size() == 0){
-            u.InserirNode(retrofitInterface, getApplicationContext());
-        }else{
-            u.UpdateNode(retrofitInterface, getApplicationContext());
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        fetchLastLocation();
+        deletarBase();
+        initFabMenu();
     }
 
     private void initFabMenu(){
@@ -94,14 +84,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fabGeraRota = findViewById(R.id.fabGeraRota);
         fabSituacao = findViewById(R.id.fabSituacao);
         fabUsuario = findViewById(R.id.fabUsuario);
+        pesquisaPosto = findViewById(R.id.pesquisaPosto);
 
-        fabGeraRota.setAlpha(0f);
-        fabSituacao.setAlpha(0f);
-        fabUsuario.setAlpha(0f);
-
-        fabGeraRota.setTranslationY(100f);
-        fabSituacao.setTranslationY(100f);
-        fabUsuario.setTranslationY(100f);
+        fabOpcoes.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+            @Override
+            public void onMenuToggle(boolean opened) {
+                Log.i(TAG, "on click: Opcoes do Aplicativo");
+                if(!opened){
+                    mMap.clear();
+                    cameraLocal();
+                }else{
+                     fabGeraRota.setLabelVisibility(View.VISIBLE);
+                     fabSituacao.setLabelVisibility(View.VISIBLE);
+                     fabUsuario.setLabelVisibility(View.VISIBLE);
+                }
+            }
+        });
+        pesquisaPosto.setAlpha(0f);
+        pesquisaPosto.setTranslationY(-100f);
 
         fabOpcoes.setOnClickListener(this);
         fabGeraRota.setOnClickListener(this);
@@ -109,27 +109,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fabUsuario.setOnClickListener(this);
     }
 
-    private void openMenu(){
-        isMenuOpen = !isMenuOpen;
-
-        fabOpcoes.animate().setInterpolator(interpolator).rotation(45f).setDuration(300).start();
-        fabGeraRota.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
-        fabSituacao.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
-        fabUsuario.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
+    private void removeLabel(){
+        fabGeraRota.setLabelVisibility(View.GONE);
+        fabSituacao.setLabelVisibility(View.GONE);
+        fabUsuario.setLabelVisibility(View.GONE);
     }
-
-    private void closeMenu(){
-        isMenuOpen = !isMenuOpen;
-
-        fabOpcoes.animate().setInterpolator(interpolator).rotation(0f).setDuration(300).start();
-        fabGeraRota.animate().translationY(100f).alpha(0f).setInterpolator(interpolator).setDuration(300).start();
-        fabSituacao.animate().translationY(100f).alpha(0f).setInterpolator(interpolator).setDuration(300).start();
-        fabUsuario.animate().translationY(100f).alpha(0f).setInterpolator(interpolator).setDuration(300).start();
-
-        mMap.clear();
-        cameraLocal();
-    }
-
     private void fetchLastLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]
@@ -153,9 +137,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         cameraLocal();
+        customInfoWindow();
     }
 
     private void cameraLocal(){
+        if(pesquisaPosto.getTranslationY() == 0f) pesquisaPosto.animate().translationY(-100).alpha(0f).setInterpolator(interpolator).setDuration(300).start();
         LatLng you = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         MarkerOptions voce = new MarkerOptions().position(you).
                 title("Você está aqui!").icon(BitmapDescriptorFactory.
@@ -171,14 +157,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 fetchLastLocation();
             }
-        }else if(requestCode == LOGIN_CODE){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mostrarLogin();
-            }
         }
     }
 
-    public void geraRota(View view) {
+    private void geraRota(View view) {
+        removeLabel();
+        if(pesquisaPosto.getTranslationY() == 0f) pesquisaPosto.animate().translationY(-100).alpha(0f).setInterpolator(interpolator).setDuration(300).start();
         Read r = new Read(getApplicationContext());
         List<PostoDeVacina> pLista = r.buscarTodos();
         int size = pLista.size();
@@ -187,26 +171,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions voce = new MarkerOptions().position(you).
                 title("Você está aqui!").
                 icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-        double tam = 0;
+        double tam = -1;
         int np = 0;
         int fila = 0;
         for(int i=0; i < size; i++) {
             double aux = distance(voce.getPosition(), pLista.get(i).getPosicao());
             int rel = pLista.get(i).getPacientes() / pLista.get(i).getEnfermeiros();
-            if (tam == 0 && pLista.get(i).getDisponibilidade()) {
+            if (tam == -1 && pLista.get(i).getDisponibilidade()) {
                 tam = aux;
                 np = i;
                 fila = rel;
-            } else if (tam > aux && pLista.get(i).getDisponibilidade()) {
-                if (fila >= rel){
+            } else if (tam + fila * tam >= aux + rel * aux && pLista.get(i).getDisponibilidade()) {
                     tam = aux;
                     np = i;
                     fila = rel;
-                }
             }
         }
         MarkerOptions posto = new MarkerOptions().position(pLista.get(np).getPosicao()).
-                title(pLista.get(np).getNome()).snippet(vacinacao(pLista.get(np).getDisponibilidade()) + " " + pLista.get(np).getPacientes());
+                title(pLista.get(np).getNome()).snippet(customSnippet(pLista.get(np)));
         mMap.animateCamera(CameraUpdateFactory.newLatLng(posto.getPosition()));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posto.getPosition(),16));
         mMap.addMarker(voce);
@@ -214,19 +196,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(getApplicationContext(), (int) tam +"m de distancia",Toast.LENGTH_SHORT).show();
     }
 
-    public void geraSituacao(View view) {
+    private void geraSituacao(View view) {
+        removeLabel();
         Read r = new Read(getApplicationContext());
         List<PostoDeVacina> pLista = r.buscarTodos();
         int size = pLista.size();
         mMap.clear();
         for(int i=0; i < size; i++) {
             MarkerOptions posto = new MarkerOptions().position(pLista.get(i).getPosicao()).
-                    title(pLista.get(i).getNome()).snippet(vacinacao(pLista.get(i).getDisponibilidade()) + pLista.get(i).getPacientes()).
+                    title(pLista.get(i).getNome()).snippet(customSnippet(pLista.get(i))).
                     icon(BitmapDescriptorFactory.defaultMarker(corMarcador(pLista.get(i).getDisponibilidade())));
             mMap.addMarker(posto);
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(-12.94, -38.44)));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-12.94, -38.44), (float) 11.3));
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(-12.92, -38.44)));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-12.92, -38.44), (float) 11.3));
+        pesquisaPosto.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
+        pesquisaPosto.setOnQueryTextListener(new searchFiltro());
+    }
+
+    private class searchFiltro implements SearchView.OnQueryTextListener {
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            mMap.clear();
+            Read r = new Read(getApplicationContext());
+            List<PostoDeVacina> PostoSm = r.buscarSemelhante(query);
+            if(PostoSm.size() == 0){
+                Toast.makeText(getApplicationContext(),"Nenhum resultado",Toast.LENGTH_SHORT).show();
+            }else{
+                MarkerOptions posto = new MarkerOptions().position(PostoSm.get(0).getPosicao()).
+                        title(PostoSm.get(0).getNome()).snippet(customSnippet(PostoSm.get(0))).
+                        icon(BitmapDescriptorFactory.defaultMarker(corMarcador(PostoSm.get(0).getDisponibilidade())));
+                mMap.addMarker(posto).showInfoWindow();
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(PostoSm.get(0).getLatitude(), PostoSm.get(0).getLongitude())));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(PostoSm.get(0).getLatitude(), PostoSm.get(0).getLongitude()), 16));
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            mMap.clear();
+            Read r = new Read(getApplicationContext());
+            List<PostoDeVacina> PostoSm = r.buscarSemelhante(newText);
+            if(PostoSm.size() == 0){
+                Toast.makeText(getApplicationContext(),"Nenhum resultado",Toast.LENGTH_SHORT).show();
+            }else {
+                for (int i = 0; i < PostoSm.size(); i++) {
+                    MarkerOptions posto = new MarkerOptions().position(PostoSm.get(i).getPosicao()).
+                            title(PostoSm.get(i).getNome()).snippet(customSnippet(PostoSm.get(i))).
+                            icon(BitmapDescriptorFactory.defaultMarker(corMarcador(PostoSm.get(i).getDisponibilidade())));
+                    mMap.addMarker(posto);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(-12.92, -38.44)));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-12.92, -38.44), (float) 11.3));
+                }
+            }
+            return false;
+        }
     }
 
     private void mostrarLogin(){
@@ -256,45 +282,72 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void deletarBase(){
         Delete d = new Delete(getApplicationContext());
         d.deleteTable();
+        Create c = new Create(getApplicationContext());
+        c.createTable();
+        Update u = new Update(getApplicationContext());
+        u.InserirNode(retrofitInterface, getApplicationContext());
     }
 
-    public String vacinacao(boolean d){ if(d) return "Vacinação Disponivel / Numero de Pacientes:"; else return "Vacinação Indisponivel / Numero de Pacientes:";}
+    public void customInfoWindow(){
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                if(marker.getSnippet() != null){
+                    View v = getLayoutInflater().inflate(R.layout.janela_info_dialog,null);
+                    TextView info=(TextView) v.findViewById(R.id.infoTest);
+                    TextView snippet=(TextView) v.findViewById(R.id.SnippetTest);
+
+                    info.setText(marker.getTitle());
+                    snippet.setText(marker.getSnippet());
+                    v.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://vacinahoramarcada.saude.salvador.ba.gov.br/")));
+                        }
+                    });
+                    return v;
+                }else{
+                    return null;
+                }
+            }
+        });
+    }
+
+    public String customSnippet(PostoDeVacina p){
+        if(p.getDisponibilidade())
+            return p.getInfo() + " \nNº de Pacientes: " + p.getPacientes() + " \nNº de Enfermeiros: " + p.getEnfermeiros();
+        else
+            return "Indisponivel";
+    }
     public float corMarcador(boolean d){if(d) return BitmapDescriptorFactory.HUE_RED; else return BitmapDescriptorFactory.HUE_YELLOW;}
 
     public static double distance(LatLng StartP, LatLng EndP) {
-        double lat1 = StartP.latitude;
-        double lat2 = EndP.latitude;
-        double lon1 = StartP.longitude;
-        double lon2 = EndP.longitude;
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLon = Math.toRadians(lon2-lon1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        double c = 2 * Math.asin(Math.sqrt(a));
-        return 6366000 * c;
+        float[] results = new float[1];
+        Location.distanceBetween(StartP.latitude, StartP.longitude,
+                EndP.latitude, EndP.longitude,
+                results);
+        double resultado = Double.valueOf(results[0]);
+        return resultado;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.fabOpcoes:
-                Log.i(TAG, "on click: Opcoes do Aplicativo");
-                if(isMenuOpen){
-                    closeMenu();
-                }else{
-                    openMenu();
-                }
-                break;
             case R.id.fabGeraRota:
-                Log.i(TAG, "on click: Exibir a menor rota");
+                Log.i(TAG, "on click: Exibir o melhor posto");
                 geraRota(v);
                 break;
             case R.id.fabSituacao:
-                Log.i(TAG, "on click: Exibir os postos");
+                Log.i(TAG, "on click: Exibir todos os postos");
                 geraSituacao(v);
                 break;
             case R.id.fabUsuario:
                 Log.i(TAG, "on click: Exibir login");
-                //deletarBase();
                 mostrarLogin();
                 break;
         }
