@@ -2,10 +2,8 @@ package com.example.vacineaqui;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +19,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.vacineaqui.databaseLocal.Create;
-import com.example.vacineaqui.databaseLocal.Delete;
 import com.example.vacineaqui.databaseLocal.Read;
 import com.example.vacineaqui.databaseLocal.Update;
 import com.example.vacineaqui.databaseNode.NodeConnection;
@@ -58,7 +55,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static RetrofitInterface retrofitInterface;
     private String BASE_URL = "https://vacineaqui.herokuapp.com/";
 
-
     private static final String TAG = "test";
     SearchView pesquisaPosto;
     FloatingActionMenu fabOpcoes;
@@ -75,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 addConverterFactory(GsonConverterFactory.create()).
                 build();
         retrofitInterface = retrofit.create(RetrofitInterface.class);
-        deletarBase();
+        criarBaselocal();
         initFabMenu();
     }
 
@@ -160,33 +156,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void geraRota(View view) {
-        removeLabel();
-        if(pesquisaPosto.getTranslationY() == 0f) pesquisaPosto.animate().translationY(-100).alpha(0f).setInterpolator(interpolator).setDuration(300).start();
-        Read r = new Read(getApplicationContext());
-        List<PostoDeVacina> pLista = r.buscarTodos();
+    private int postoIdeal(List<PostoDeVacina> pLista, LatLng voce){
         int size = pLista.size();
-        LatLng you = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        mMap.clear();
-        MarkerOptions voce = new MarkerOptions().position(you).
-                title("Você está aqui!").
-                icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
         double tam = -1;
         int np = 0;
         int fila = 0;
         for(int i=0; i < size; i++) {
-            double aux = distance(voce.getPosition(), pLista.get(i).getPosicao());
+            double aux = distance(voce, pLista.get(i).getPosicao());
             int rel = pLista.get(i).getPacientes() / pLista.get(i).getEnfermeiros();
             if (tam == -1 && pLista.get(i).getDisponibilidade()) {
                 tam = aux;
                 np = i;
                 fila = rel;
             } else if (tam + fila * tam >= aux + rel * aux && pLista.get(i).getDisponibilidade()) {
-                    tam = aux;
-                    np = i;
-                    fila = rel;
+                tam = aux;
+                np = i;
+                fila = rel;
             }
         }
+        return np;
+    }
+
+    private void geraRota() {
+        removeLabel();
+        if(pesquisaPosto.getTranslationY() == 0f) pesquisaPosto.animate().translationY(-100).alpha(0f).setInterpolator(interpolator).setDuration(300).start();
+        Update u = new Update(getApplicationContext());
+        u.UpdateNode(retrofitInterface, getApplicationContext());
+        Read r = new Read(getApplicationContext());
+        List<PostoDeVacina> pLista = r.buscarTodos();
+        LatLng you = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        mMap.clear();
+        MarkerOptions voce = new MarkerOptions().position(you).
+                title("Você está aqui!").
+                icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+        int np = postoIdeal(pLista, you);
+        double tam = distance(voce.getPosition(), pLista.get(np).getPosicao());
         MarkerOptions posto = new MarkerOptions().position(pLista.get(np).getPosicao()).
                 title(pLista.get(np).getNome()).snippet(customSnippet(pLista.get(np)));
         mMap.animateCamera(CameraUpdateFactory.newLatLng(posto.getPosition()));
@@ -196,8 +200,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(getApplicationContext(), (int) tam +"m de distancia",Toast.LENGTH_SHORT).show();
     }
 
-    private void geraSituacao(View view) {
+    private void geraSituacao() {
         removeLabel();
+        Update u = new Update(getApplicationContext());
+        u.UpdateNode(retrofitInterface, getApplicationContext());
         Read r = new Read(getApplicationContext());
         List<PostoDeVacina> pLista = r.buscarTodos();
         int size = pLista.size();
@@ -219,17 +225,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public boolean onQueryTextSubmit(String query) {
             mMap.clear();
+            Update u = new Update(getApplicationContext());
+            u.UpdateNode(retrofitInterface, getApplicationContext());
             Read r = new Read(getApplicationContext());
             List<PostoDeVacina> PostoSm = r.buscarSemelhante(query);
-            if(PostoSm.size() == 0){
+            int size = PostoSm.size();
+            if(size == 0){
                 Toast.makeText(getApplicationContext(),"Nenhum resultado",Toast.LENGTH_SHORT).show();
             }else{
-                MarkerOptions posto = new MarkerOptions().position(PostoSm.get(0).getPosicao()).
-                        title(PostoSm.get(0).getNome()).snippet(customSnippet(PostoSm.get(0))).
-                        icon(BitmapDescriptorFactory.defaultMarker(corMarcador(PostoSm.get(0).getDisponibilidade())));
+                LatLng you = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                int np = postoIdeal(PostoSm, you);
+                MarkerOptions posto = new MarkerOptions().position(PostoSm.get(np).getPosicao()).
+                        title(PostoSm.get(np).getNome()).snippet(customSnippet(PostoSm.get(np))).
+                        icon(BitmapDescriptorFactory.defaultMarker(corMarcador(PostoSm.get(np).getDisponibilidade())));
                 mMap.addMarker(posto).showInfoWindow();
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(PostoSm.get(0).getLatitude(), PostoSm.get(0).getLongitude())));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(PostoSm.get(0).getLatitude(), PostoSm.get(0).getLongitude()), 16));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(PostoSm.get(np).getLatitude(), PostoSm.get(np).getLongitude())));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(PostoSm.get(np).getLatitude(), PostoSm.get(np).getLongitude()), 16));
             }
             return false;
         }
@@ -279,13 +290,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void deletarBase(){
-        Delete d = new Delete(getApplicationContext());
-        d.deleteTable();
+    public void criarBaselocal(){
         Create c = new Create(getApplicationContext());
         c.createTable();
         Update u = new Update(getApplicationContext());
-        u.InserirNode(retrofitInterface, getApplicationContext());
+        List<PostoDeVacina> plista = new Read(getApplicationContext()).buscarTodos();
+        if(plista.size() == 0)
+            u.InserirNode(retrofitInterface, getApplicationContext());
+        else
+            u.UpdateNode(retrofitInterface, getApplicationContext());
     }
 
     public void customInfoWindow(){
@@ -304,12 +317,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     info.setText(marker.getTitle());
                     snippet.setText(marker.getSnippet());
-                    v.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://vacinahoramarcada.saude.salvador.ba.gov.br/")));
-                        }
-                    });
                     return v;
                 }else{
                     return null;
@@ -319,10 +326,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public String customSnippet(PostoDeVacina p){
-        if(p.getDisponibilidade())
+        if(p.getDisponibilidade()) {
             return p.getInfo() + " \nNº de Pacientes: " + p.getPacientes() + " \nNº de Enfermeiros: " + p.getEnfermeiros();
-        else
-            return "Indisponivel";
+        }else{
+            return "VACINAÇÃO INDISPONIVEL";
+        }
     }
     public float corMarcador(boolean d){if(d) return BitmapDescriptorFactory.HUE_RED; else return BitmapDescriptorFactory.HUE_YELLOW;}
 
@@ -340,11 +348,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (v.getId()){
             case R.id.fabGeraRota:
                 Log.i(TAG, "on click: Exibir o melhor posto");
-                geraRota(v);
+                geraRota();
                 break;
             case R.id.fabSituacao:
                 Log.i(TAG, "on click: Exibir todos os postos");
-                geraSituacao(v);
+                geraSituacao();
                 break;
             case R.id.fabUsuario:
                 Log.i(TAG, "on click: Exibir login");

@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.example.vacineaqui.Filometro;
 import com.example.vacineaqui.MapsActivity;
+import com.example.vacineaqui.databaseLocal.Update;
 
 import java.util.HashMap;
 
@@ -51,6 +52,8 @@ public class NodeConnection {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200) {
+                    Update u = new Update(context);
+                    u.UpdateNode(retrofitInterface, context);
                     Intent salvar = new Intent(context, MapsActivity.class);
                     salvar.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(salvar);
@@ -73,6 +76,8 @@ public class NodeConnection {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code() == 200) {
+                    Update u = new Update(context);
+                    u.UpdateNode(retrofitInterface, context);
                     Intent salvar = new Intent(context, MapsActivity.class);
                     salvar.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(salvar);

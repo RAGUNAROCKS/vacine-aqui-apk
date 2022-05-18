@@ -92,7 +92,6 @@ public class Update extends SQLiteOpenHelper {
                         p.put("PACIENTES", result.get(i).getPacientes());
                         p.put("ENFERMEIROS", result.get(i).getEnfermeiros());
                         p.put("INFO", result.get(i).getInfo());
-                        System.out.println(result.get(i).getId()+" "+result.get(i).getNome());
                         String where = "ID = '"+result.get(i).getId()+"'";
                         db.update(TABELA_POSTOVACINA, p, where, null);
                     }

@@ -47,7 +47,7 @@ public class Filometro extends Activity implements View.OnClickListener {
         }
     }
 
-    private String vacinação(boolean d){ if(d) return "Sim"; else return "Não";}
+    private String vacinação(boolean d){ if(d) return "Aberto"; else return "Fechado";}
 
     private void mostrarDados(){
         postoText = findViewById(R.id.postoText);

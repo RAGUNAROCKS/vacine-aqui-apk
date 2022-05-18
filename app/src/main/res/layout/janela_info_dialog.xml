@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/infoTest"
@@ -21,11 +22,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="12dp"
+        android:textColor="@color/gray"
         android:gravity="center"/>
-
-    <!--<Button
-        android:id="@+id/ButtonTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="agendar"/>-->
 </LinearLayout>
