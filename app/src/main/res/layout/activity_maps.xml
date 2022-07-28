@@ -13,18 +13,15 @@
         android:id="@+id/textOptions"
         android:text="Clique no botão +"
         android:textAlignment="center"
-        android:textSize="25dp"
-        android:textFontWeight="700"/>
+        android:textSize="25sp"
+        android:fontFamily="sans-serif-condensed-medium" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/mapLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        tools:context=".MapsActivity">
+        android:layout_margin="5dp">
 
         <fragment
             android:id="@+id/map"
@@ -36,7 +33,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:context=".MapsActivity"
-            tools:layout="@layout/activity_maps" />
+            tools:layout="@layout/activity_maps"/>
 
         <android.widget.SearchView
             android:id="@+id/pesquisaPosto"
@@ -47,7 +44,7 @@
             android:background="?attr/colorOnSecondary"
             android:gravity="start"
             android:iconifiedByDefault="false"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/fabOpcoes"
@@ -77,7 +74,7 @@
                 app:fab_size="mini"
                 app:fab_colorNormal="@color/red_light_button"
                 app:fab_colorPressed="@color/red_light_ripped"
-                app:fab_colorRipple="@color/blue_gray"/>
+                app:fab_colorRipple="@color/blue_gray" />
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fabSituacao"
@@ -88,7 +85,7 @@
                 app:fab_size="mini"
                 app:fab_colorNormal="@color/red_light_button"
                 app:fab_colorPressed="@color/red_light_ripped"
-                app:fab_colorRipple="@color/blue_gray"/>
+                app:fab_colorRipple="@color/blue_gray" />
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fabUsuario"
@@ -99,7 +96,7 @@
                 app:fab_size="mini"
                 app:fab_colorNormal="@color/red_light_button"
                 app:fab_colorPressed="@color/red_light_ripped"
-                app:fab_colorRipple="@color/blue_gray"/>
+                app:fab_colorRipple="@color/blue_gray" />
         </com.github.clans.fab.FloatingActionMenu>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

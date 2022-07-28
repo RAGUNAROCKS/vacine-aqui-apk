@@ -5,7 +5,7 @@
 - Adição do texto informativo encima do mapa.
 - Consertado o modo noturno do aplicativo, mudando a cor de roxo para um cinza azulado.
 - Correções de limpeza de código.
-- Melhora da interfaçe do aplicativo. 
+- Melhora da interface do aplicativo. 
 
 <h2>Vacine Aqui 0.8</h2>
 
