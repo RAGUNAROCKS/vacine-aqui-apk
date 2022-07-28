@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.vacineaqui.databaseLocal.Update;
 import com.example.vacineaqui.databaseNode.NodeConnection;
 import com.example.vacineaqui.databaseNode.PostoDeVacina;
 
@@ -18,6 +17,7 @@ public class Filometro extends Activity implements View.OnClickListener {
     Button btnAddPacientes, btnSubPacientes, btnAddEnfermeiros, btnSubEnfermeiros, btnSalvar, btnFecharPosto, btnSair;
     TextView lblQtdPacientes, lblQtdEnfermeiros, postoText, pacientesText, enfermeirosText, disponibilidadeText;
     private int QTDPACIENTES = 0, QTDENFERMEIROS = 0, ID; PostoDeVacina result;
+    public static boolean connected = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class Filometro extends Activity implements View.OnClickListener {
         }
     }
 
-    private String vacinação(boolean d){ if(d) return "Aberto"; else return "Fechado";}
+    private String vacinacao(boolean d){ if(d) return "Aberto"; else return "Fechado";}
 
     private void mostrarDados(){
         postoText = findViewById(R.id.postoText);
@@ -58,7 +58,7 @@ public class Filometro extends Activity implements View.OnClickListener {
         postoText.setText(result.getNome());
         pacientesText.setText(Integer.toString(result.getPacientes()));
         enfermeirosText.setText(Integer.toString(result.getEnfermeiros()));
-        disponibilidadeText.setText(vacinação(result.getDisponibilidade()));
+        disponibilidadeText.setText(vacinacao(result.getDisponibilidade()));
     }
 
     private void modPacientes(){
@@ -94,7 +94,6 @@ public class Filometro extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Update u = new Update(getApplicationContext());
         switch (v.getId()){
             case R.id.btnAddPacientes:
                 if(result.getDisponibilidade()) QTDPACIENTES++;
@@ -124,10 +123,14 @@ public class Filometro extends Activity implements View.OnClickListener {
                 }else{
                     Toast.makeText(getApplicationContext(), "Redução ultrapassa a quantidade de pessoas", Toast.LENGTH_SHORT).show();
                 }
+                if (connected) {
+                    finish();
+                    connected = false;
+                }
                 break;
             case R.id.btnFecharPosto:
                 NodeConnection nodeSitPosto = new NodeConnection();
-                if(result.getDisponibilidade() == true){
+                if(result.getDisponibilidade()){
                     HashMap<String, String> estPosto = new HashMap<>();
                     estPosto.put("id", Integer.toString(ID));
                     estPosto.put("disponibilidade", String.valueOf(false));
@@ -144,11 +147,16 @@ public class Filometro extends Activity implements View.OnClickListener {
                     nodeSitPosto.dispPosto(MapsActivity.retrofitInterface, estPosto, getApplicationContext(), true);
                     Toast.makeText(getApplicationContext(), "Posto Aberto", Toast.LENGTH_SHORT).show();
                 }
+                if (connected) {
+                    finish();
+                    connected = false;
+                }
                 break;
             case R.id.btnSair:
                 Intent sair = new Intent(getApplicationContext(), MapsActivity.class);
                 sair.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(sair);
+                finish();
                 break;
         }
     }

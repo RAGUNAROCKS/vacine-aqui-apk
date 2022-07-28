@@ -58,6 +58,7 @@ public class NodeConnection {
                     salvar.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(salvar);
                     Toast.makeText(context, "Registro Salvo", Toast.LENGTH_LONG).show();
+                    Filometro.connected = true;
                 }else if(response.code() == 404){
                     Toast.makeText(context, "Usuário não encontrado", Toast.LENGTH_LONG).show();
                 }
@@ -83,6 +84,7 @@ public class NodeConnection {
                     context.startActivity(salvar);
                     if(aberto) Toast.makeText(context, "Posto Aberto", Toast.LENGTH_LONG).show();
                     else Toast.makeText(context, "Posto Fechado", Toast.LENGTH_LONG).show();
+                    Filometro.connected = true;
                 }else if(response.code() == 404){
                     Toast.makeText(context, "Usuário não encontrado", Toast.LENGTH_LONG).show();
                 }

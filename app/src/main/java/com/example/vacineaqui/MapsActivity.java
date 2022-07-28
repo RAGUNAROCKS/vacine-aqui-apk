@@ -57,6 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static final String TAG = "test";
     SearchView pesquisaPosto;
+    TextView textHints;
     FloatingActionMenu fabOpcoes;
     FloatingActionButton fabGeraRota, fabSituacao, fabUsuario;
     OvershootInterpolator interpolator = new OvershootInterpolator();
@@ -81,6 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fabSituacao = findViewById(R.id.fabSituacao);
         fabUsuario = findViewById(R.id.fabUsuario);
         pesquisaPosto = findViewById(R.id.pesquisaPosto);
+        textHints = findViewById(R.id.textOptions);
 
         fabOpcoes.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
             @Override
@@ -89,10 +91,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(!opened){
                     mMap.clear();
                     cameraLocal();
+                    textHints.setText("Clique no botão +");
                 }else{
                      fabGeraRota.setLabelVisibility(View.VISIBLE);
                      fabSituacao.setLabelVisibility(View.VISIBLE);
                      fabUsuario.setLabelVisibility(View.VISIBLE);
+                     textHints.setText("Selecione as opções");
                 }
             }
         });
@@ -198,6 +202,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(voce);
         mMap.addMarker(posto).showInfoWindow();
         Toast.makeText(getApplicationContext(), (int) tam +"m de distancia",Toast.LENGTH_SHORT).show();
+        textHints.setText("O Posto Ideal é...");
     }
 
     private void geraSituacao() {
@@ -218,6 +223,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-12.92, -38.44), (float) 11.3));
         pesquisaPosto.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
         pesquisaPosto.setOnQueryTextListener(new searchFiltro());
+        textHints.setText("Postos Disponíveis");
     }
 
     private class searchFiltro implements SearchView.OnQueryTextListener {
@@ -267,6 +273,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void mostrarLogin(){
+        textHints.setText("Acesso Restrito");
         View v = getLayoutInflater().inflate(R.layout.login_dialog, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(v).show();
@@ -287,7 +294,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 nodeConnection.login(retrofitInterface, map, getApplicationContext());
             }
         });
-
     }
 
     public void criarBaselocal(){
