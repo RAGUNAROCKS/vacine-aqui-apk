@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -51,9 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
 
-    private Retrofit retrofit;
     public static RetrofitInterface retrofitInterface;
-    private String BASE_URL = "https://vacineaqui.herokuapp.com/";
+    private final String BASE_URL = "https://vacineaqui.herokuapp.com/";
 
     private static final String TAG = "test";
     SearchView pesquisaPosto;
@@ -68,7 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         fetchLastLocation();
-        retrofit = new Retrofit.Builder().baseUrl(BASE_URL).
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).
                 addConverterFactory(GsonConverterFactory.create()).
                 build();
         retrofitInterface = retrofit.create(RetrofitInterface.class);
@@ -84,20 +84,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         pesquisaPosto = findViewById(R.id.pesquisaPosto);
         textHints = findViewById(R.id.textOptions);
 
-        fabOpcoes.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
-            @Override
-            public void onMenuToggle(boolean opened) {
-                Log.i(TAG, "on click: Opcoes do Aplicativo");
-                if(!opened){
-                    mMap.clear();
-                    cameraLocal();
-                    textHints.setText("Clique no botão +");
-                }else{
-                     fabGeraRota.setLabelVisibility(View.VISIBLE);
-                     fabSituacao.setLabelVisibility(View.VISIBLE);
-                     fabUsuario.setLabelVisibility(View.VISIBLE);
-                     textHints.setText("Selecione as opções");
-                }
+        fabOpcoes.setOnMenuToggleListener(opened -> {
+            Log.i(TAG, "on click: Opcoes do Aplicativo");
+            if(!opened){
+                mMap.clear();
+                cameraLocal();
+                textHints.setText("Clique no botão +");
+            }else{
+                 fabGeraRota.setLabelVisibility(View.VISIBLE);
+                 fabSituacao.setLabelVisibility(View.VISIBLE);
+                 fabUsuario.setLabelVisibility(View.VISIBLE);
+                 textHints.setText("Selecione as opções");
             }
         });
         pesquisaPosto.setAlpha(0f);
@@ -134,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         cameraLocal();
         customInfoWindow();
@@ -148,11 +145,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
         mMap.animateCamera(CameraUpdateFactory.newLatLng(you));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(you,12));
-        mMap.addMarker(voce).showInfoWindow();
+        Objects.requireNonNull(mMap.addMarker(voce)).showInfoWindow();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 fetchLastLocation();
@@ -200,7 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.newLatLng(posto.getPosition()));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posto.getPosition(),16));
         mMap.addMarker(voce);
-        mMap.addMarker(posto).showInfoWindow();
+        Objects.requireNonNull(mMap.addMarker(posto)).showInfoWindow();
         Toast.makeText(getApplicationContext(), (int) tam +"m de distancia",Toast.LENGTH_SHORT).show();
         textHints.setText("O Posto Ideal é...");
     }
@@ -244,7 +242,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 MarkerOptions posto = new MarkerOptions().position(PostoSm.get(np).getPosicao()).
                         title(PostoSm.get(np).getNome()).snippet(customSnippet(PostoSm.get(np))).
                         icon(BitmapDescriptorFactory.defaultMarker(corMarcador(PostoSm.get(np).getDisponibilidade())));
-                mMap.addMarker(posto).showInfoWindow();
+                Objects.requireNonNull(mMap.addMarker(posto)).showInfoWindow();
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(PostoSm.get(np).getLatitude(), PostoSm.get(np).getLongitude())));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(PostoSm.get(np).getLatitude(), PostoSm.get(np).getLongitude()), 16));
             }
@@ -282,17 +280,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         EditText loginEdit = v.findViewById(R.id.lblLogin);
         EditText senhaEdit = v.findViewById(R.id.lblSenha);
 
-        entrarBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashMap<String, String> map = new HashMap<>();
+        entrarBtn.setOnClickListener(v1 -> {
+            HashMap<String, String> map = new HashMap<>();
 
-                map.put("id", loginEdit.getText().toString());
-                map.put("senha", senhaEdit.getText().toString());
+            map.put("id", loginEdit.getText().toString());
+            map.put("senha", senhaEdit.getText().toString());
 
-                NodeConnection nodeConnection = new NodeConnection();
-                nodeConnection.login(retrofitInterface, map, getApplicationContext());
-            }
+            NodeConnection nodeConnection = new NodeConnection();
+            nodeConnection.login(retrofitInterface, map, getApplicationContext());
+            try { Thread.sleep (1000); finish();} catch (InterruptedException ex) {Log.e(String.valueOf(map.get("id")), "onClick: ", ex);}
         });
     }
 
@@ -318,8 +314,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public View getInfoContents(Marker marker) {
                 if(marker.getSnippet() != null){
                     View v = getLayoutInflater().inflate(R.layout.janela_info_dialog,null);
-                    TextView info=(TextView) v.findViewById(R.id.infoTest);
-                    TextView snippet=(TextView) v.findViewById(R.id.SnippetTest);
+                    TextView info = v.findViewById(R.id.infoTest);
+                    TextView snippet = v.findViewById(R.id.SnippetTest);
 
                     info.setText(marker.getTitle());
                     snippet.setText(marker.getSnippet());
@@ -345,8 +341,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location.distanceBetween(StartP.latitude, StartP.longitude,
                 EndP.latitude, EndP.longitude,
                 results);
-        double resultado = Double.valueOf(results[0]);
-        return resultado;
+        return results[0];
     }
 
     @Override

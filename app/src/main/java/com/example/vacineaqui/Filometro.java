@@ -3,6 +3,7 @@ package com.example.vacineaqui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,7 +18,6 @@ public class Filometro extends Activity implements View.OnClickListener {
     Button btnAddPacientes, btnSubPacientes, btnAddEnfermeiros, btnSubEnfermeiros, btnSalvar, btnFecharPosto, btnSair;
     TextView lblQtdPacientes, lblQtdEnfermeiros, postoText, pacientesText, enfermeirosText, disponibilidadeText;
     private int QTDPACIENTES = 0, QTDENFERMEIROS = 0, ID; PostoDeVacina result;
-    public static boolean connected = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +123,7 @@ public class Filometro extends Activity implements View.OnClickListener {
                 }else{
                     Toast.makeText(getApplicationContext(), "Redução ultrapassa a quantidade de pessoas", Toast.LENGTH_SHORT).show();
                 }
-                if (connected) {
-                    finish();
-                    connected = false;
-                }
+                try { Thread.sleep (1000); finish();} catch (InterruptedException ex) {Log.e(String.valueOf(ID), "onClick: ", ex);}
                 break;
             case R.id.btnFecharPosto:
                 NodeConnection nodeSitPosto = new NodeConnection();
@@ -138,7 +135,7 @@ public class Filometro extends Activity implements View.OnClickListener {
                     estPosto.put("enfermeiros", Integer.toString((result.getEnfermeiros())));
                     nodeSitPosto.dispPosto(MapsActivity.retrofitInterface, estPosto, getApplicationContext(), false);
                     Toast.makeText(getApplicationContext(), "Posto Fechado", Toast.LENGTH_SHORT).show();
-                }else {
+                }else{
                     HashMap<String, String> estPosto = new HashMap<>();
                     estPosto.put("id", Integer.toString(ID));
                     estPosto.put("disponibilidade", String.valueOf(true));
@@ -147,10 +144,7 @@ public class Filometro extends Activity implements View.OnClickListener {
                     nodeSitPosto.dispPosto(MapsActivity.retrofitInterface, estPosto, getApplicationContext(), true);
                     Toast.makeText(getApplicationContext(), "Posto Aberto", Toast.LENGTH_SHORT).show();
                 }
-                if (connected) {
-                    finish();
-                    connected = false;
-                }
+                try { Thread.sleep (1000); finish();} catch (InterruptedException ex) {Log.e(String.valueOf(ID), "onClick: ", ex);}
                 break;
             case R.id.btnSair:
                 Intent sair = new Intent(getApplicationContext(), MapsActivity.class);
@@ -158,6 +152,8 @@ public class Filometro extends Activity implements View.OnClickListener {
                 startActivity(sair);
                 finish();
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + v.getId());
         }
     }
 }
